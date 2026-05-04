@@ -48,7 +48,7 @@ digitix/
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/](https://github.com/)DocDim/digitix.git
+   git clone https://github.com/DocDim/digitix.git
    cd digitix
    ```
 
