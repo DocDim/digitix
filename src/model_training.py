@@ -1,77 +1,66 @@
 import os
 import tensorflow as tf
-from tensorflow.keras import layers, models, datasets
+from tensorflow.keras import layers, models, datasets, preprocessing
 import matplotlib.pyplot as plt
 
-def train_digit_model():
-    print("--- Loading MNIST Dataset ---")
-    # 1. Load Dataset
+def train_digit_model(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'], epochs=5):
+    # 1. Load and Normalize Dataset
     (x_train, y_train), (x_test, y_test) = datasets.mnist.load_data()
+    x_train = x_train.reshape(-1, 28, 28, 1).astype('float32') / 255.0
+    x_test = x_test.reshape(-1, 28, 28, 1).astype('float32') / 255.0
 
-    # 2. Preprocessing
-    # Normalize pixel values to be between 0 and 1
-    x_train, x_test = x_train / 255.0, x_test / 255.0
+    # 2. Tightened Augmentation (Prevents 0 from shifting into a 6/9 position)
+    datagen = preprocessing.image.ImageDataGenerator(
+        rotation_range=15,
+        width_shift_range=0.05,  # Reduced from 0.1
+        height_shift_range=0.05, # Reduced from 0.1
+        zoom_range=0.1
+    )
+    datagen.fit(x_train)
 
-    # Reshape to (batch_size, height, width, channels) for CNN
-    x_train = x_train.reshape(-1, 28, 28, 1)
-    x_test = x_test.reshape(-1, 28, 28, 1)
-
-    print("--- Building CNN Architecture ---")
-    # 3. CNN Implementation
+    # 3. Deeper CNN Architecture
     model = models.Sequential([
-        # Convolutional Layer 1
-        layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+        # Layer 1: More filters for better edge/tail detection
+        layers.Conv2D(64, (3, 3), activation='relu', input_shape=(28, 28, 1)),
         layers.MaxPooling2D((2, 2)),
         
-        # Convolutional Layer 2
-        layers.Conv2D(64, (3, 3), activation='relu'),
+        # Layer 2: Deeper feature extraction
+        layers.Conv2D(128, (3, 3), activation='relu'),
         layers.MaxPooling2D((2, 2)),
         
-        # Fully Connected Layers
         layers.Flatten(),
-        layers.Dense(128, activation='relu'),
-        layers.Dropout(0.2), # Helps prevent overfitting
-        layers.Dense(10, activation='softmax') # 10 classes (0-9)
+        # Larger Dense layer for complex feature combination
+        layers.Dense(256, activation='relu'),
+        layers.Dropout(0.3), # Increased dropout to prevent overfitting on loop shapes
+        layers.Dense(10, activation='softmax')
     ])
 
-    model.compile(optimizer='adam',
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
+    # 4. Compile and Train
+    model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
+    
+    history = model.fit(
+        datagen.flow(x_train, y_train, batch_size=32),
+        epochs=epochs,
+        validation_data=(x_test, y_test)
+    )
 
-    print("--- Starting Training ---")
-    # 4. Training (5 epochs is usually enough for >98% accuracy on MNIST)
-    history = model.fit(x_train, y_train, 
-                        epochs=5, 
-                        validation_data=(x_test, y_test))
-
-    # 5. Save the Model
-    # Ensure the 'models' directory exists
+    # 5. Save Artifacts
     if not os.path.exists('models'):
         os.makedirs('models')
-    
-    model_path = os.path.join('models', 'digit_model.h5')
-    model.save(model_path)
-    print(f"--- Model Saved to {model_path} ---")
+    model.save(os.path.join('models', 'digit_model.h5'))
 
-    # 6. Evaluation Visualization
+    # 6. Save Plot
     plt.figure(figsize=(10, 4))
-    
-    # Plot Accuracy
+    metric_name = metrics[0] if isinstance(metrics, list) else metrics
     plt.subplot(1, 2, 1)
-    plt.plot(history.history['accuracy'], label='Training Accuracy')
-    plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
-    plt.title('Model Accuracy')
+    plt.plot(history.history[metric_name], label='Train')
+    plt.plot(history.history[f'val_{metric_name}'], label='Val')
+    plt.title('Performance')
     plt.legend()
-
-    # Plot Loss
     plt.subplot(1, 2, 2)
-    plt.plot(history.history['loss'], label='Training Loss')
-    plt.plot(history.history['val_loss'], label='Validation Loss')
-    plt.title('Model Loss')
+    plt.plot(history.history['loss'], label='Train')
+    plt.plot(history.history['val_loss'], label='Val')
+    plt.title('Loss')
     plt.legend()
-    
-    plt.tight_layout()
-    plt.show()
-
-if __name__ == "__main__":
-    train_digit_model()
+    plt.savefig(os.path.join('models', 'accuracy_plot.png'))
+    plt.close()

@@ -2,8 +2,7 @@
 
 Digitix is a full-stack machine learning application that identifies handwritten digits (0–9) using a Convolutional Neural Network (CNN). The project features a robust image-processing pipeline and an interactive web interface built with Streamlit.
 
-## 🚀 Live Preview
-*(Optional: Add a link here if you deploy to Streamlit Cloud, or include a screenshot of your GUI from `app.py` here)*
+
 
 ## 🛠️ Tech Stack
 - **Language:** Python
@@ -40,7 +39,7 @@ digitix/
 ├── models/               # Saved CNN model (.h5)
 ├── src/
 │   ├── model_training.py # CNN training script
-│   └── inference.py      # Image processing pipeline
+│   └── image_pipeline.py      # Image processing pipeline
 └── README.md             # Project documentation
 ```
 
