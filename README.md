@@ -36,6 +36,7 @@ The system utilizes a CNN architecture, which is superior to standard feed-forwa
 digitix/
 ├── app.py                # Streamlit Web GUI
 ├── requirements.txt      # Project dependencies
+├── data/                 # sample handwritten digit
 ├── models/               # Saved CNN model (.h5)
 ├── src/
 │   ├── model_training.py # CNN training script
