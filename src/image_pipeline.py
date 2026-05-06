@@ -35,7 +35,7 @@ def preprocess_image(image):
     # 3. Resize to 28x28
     img = cv2.resize(img, (28, 28), interpolation=cv2.INTER_AREA)
 
-    # 4. Center of Mass Alignment (The "Confusion Fix")
+    # 4. Center of Mass Alignment (Prevents 0 from being misclassified as 6/9)
     img = center_digit(img)
 
     # 5. Normalization and Reshaping

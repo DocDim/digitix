@@ -40,7 +40,7 @@ digitix/
 ├── models/               # Saved CNN model (.h5)
 ├── src/
 │   ├── model_training.py # CNN training script
-│   └── image_pipeline.py      # Image processing pipeline
+│   └── image_pipeline.py # Image processing pipeline
 └── README.md             # Project documentation
 ```
 
