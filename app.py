@@ -88,6 +88,13 @@ st.markdown("""
 
 # --- SIDEBAR: SYSTEM & HYPERPARAMS ---
 with st.sidebar:
+    # Adding the Logo at the top of the sidebar
+    logo = Image.open("digitix_logo.png")
+    logo_image = logo.resize((100, 120))
+    st.markdown('<div class="img-container">', unsafe_allow_html=True)
+    st.image(logo_image)
+    st.markdown('</div>', unsafe_allow_html=True)  
+
     st.header("⚙️ System Control")
     model_path = os.path.join('models', 'digit_model.h5')
     
@@ -96,7 +103,7 @@ with st.sidebar:
     else:
         st.warning("⚠️ No Model Found")
 
-    st.divider()
+    
     st.subheader("Hyperparameters")
     opt = st.selectbox("Optimizer", ["adam", "sgd", "rmsprop"])
     loss_fn = st.selectbox("Loss Function", ["sparse_categorical_crossentropy", "categorical_crossentropy"])
