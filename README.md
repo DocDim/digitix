@@ -1,4 +1,6 @@
-# 🔢 Digitix: Handwritten Digit Recognition System
+<img src="digitix_logo.png" alt="Logo" width="120">
+
+# Handwritten Digit Recognition System
 
 Digitix is a full-stack machine learning application that identifies handwritten digits (0–9) using a Convolutional Neural Network (CNN). The project features a robust image-processing pipeline and an interactive web interface built with Streamlit.
 
@@ -79,3 +81,10 @@ digitix/
 
 ## 📄 License
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+
+## Screenshots
+
+<img src="screenshot/homepage.png" alt="home page">
+<img src="screenshot/loadimage.png" alt="loading image">
+<img src="screenshot/classificationresult.png" alt="Classification">
